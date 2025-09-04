@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>QualifyLenderLead</AssemblyName>
+  </PropertyGroup>
+
+  <!-- Define configurations -->
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MockDebug|AnyCPU'">
+    <DefineConstants>DEBUG;TRACE;MOCK_SDK</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <!-- Conditional package references -->
+  <ItemGroup Condition="'$(DefineConstants.Contains(MOCK_SDK))'!='true'">
+    <PackageReference Include="CRM.CoreService.Nuget.Standard" Version="3004.3.2" />
+    <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.34" />
+  </ItemGroup>
+
+  <!-- Always include these packages -->
+  <ItemGroup>
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
+    <PackageReference Include="TextCopy" Version="6.2.1" />
+  </ItemGroup>
+
+  <!-- Include central App.config -->
+  <ItemGroup>
+    <None Include="..\..\..\app.env.config\App.config">
+      <Link>App.config</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
