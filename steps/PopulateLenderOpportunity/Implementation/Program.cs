@@ -27,7 +27,7 @@ namespace Icharus
 {
     public class Program
     {
-        // Configuration values from App.config
+        // Configuration values from centralized config files
         private static string ApplicationToken = string.Empty;
         private static string BusinessUnitValue = string.Empty;
         private static string CrmServiceEnvironment = string.Empty;
@@ -224,7 +224,7 @@ namespace Icharus
         /// <param name="environment">The environment to load (DEV, UAT, or PROD)</param>
         private static void LoadEnvironmentConfiguration(string environment)
         {
-            // First load settings from the base App.config
+            // First load settings from the centralized base config
             ApplicationToken = ConfigurationManager.AppSettings["LenderApplicationToken"] ?? string.Empty;
             BusinessUnitValue = ConfigurationManager.AppSettings["LenderBusinessUnit"] ?? string.Empty;
             CrmServiceEnvironment = ConfigurationManager.AppSettings["LenderCrmServiceEnvironment"] ?? string.Empty;

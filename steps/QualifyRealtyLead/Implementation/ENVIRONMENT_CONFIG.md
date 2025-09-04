@@ -90,7 +90,7 @@ To modify settings for a specific environment:
 ## Configuration Loading
 
 The application uses runtime configuration loading that:
-1. Loads base settings from the local App.config
+1. Loads base settings from the centralized App.config
 2. Overrides with environment-specific settings from the centralized config files
 3. Maps DEV environment to use App.Debug.config for consistency
 
@@ -98,6 +98,6 @@ The application uses runtime configuration loading that:
 
 To add a new Realty-specific setting to all environments:
 
-1. Add the setting to the base `App.config` file with a default value
+1. Add the setting to the base `App.config` file in the `app.env.config` directory with a default value
 2. Add the setting with environment-specific values to each centralized environment config file
 3. Update the Program.cs configuration loading logic if needed
