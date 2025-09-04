@@ -30,7 +30,7 @@ namespace Icharus
 {
     public class Program
     {
-        // Configuration values from App.config
+        // Configuration values from centralized config files
         private static string ApplicationToken;
         private static string BusinessUnitValue;
         private static string CrmServiceEnvironment;
@@ -377,7 +377,7 @@ namespace Icharus
         /// <param name="environment">The environment to load (DEV, UAT, or PROD)</param>
         private static void LoadEnvironmentConfiguration(string environment)
         {
-            // First load settings from the base App.config
+            // First load settings from the centralized base config
             ApplicationToken = ConfigurationManager.AppSettings["LenderApplicationToken"];
             BusinessUnitValue = ConfigurationManager.AppSettings["LenderBusinessUnit"];
             CrmServiceEnvironment = ConfigurationManager.AppSettings["LenderCrmServiceEnvironment"];
@@ -495,14 +495,14 @@ namespace Icharus
             // Check ApplicationToken
             if (string.IsNullOrEmpty(ApplicationToken))
             {
-                Console.WriteLine("Error: ApplicationToken is missing in App.config");
+                Console.WriteLine("Error: ApplicationToken is missing in configuration");
                 isValid = false;
             }
             
             // Check BusinessUnitValue
             if (string.IsNullOrEmpty(BusinessUnitValue))
             {
-                Console.WriteLine("Error: BusinessUnit is missing in App.config");
+                Console.WriteLine("Error: BusinessUnit is missing in configuration");
                 isValid = false;
             }
             else
@@ -522,14 +522,14 @@ namespace Icharus
             // Check CrmServiceEnvironment
             if (string.IsNullOrEmpty(CrmServiceEnvironment))
             {
-                Console.WriteLine("Error: CrmServiceEnvironment is missing in App.config");
+                Console.WriteLine("Error: CrmServiceEnvironment is missing in configuration");
                 isValid = false;
             }
             
             // Check LeadTeamId
             if (string.IsNullOrEmpty(LeadTeamId))
             {
-                Console.WriteLine("Error: _vuhlLeadAdmin is missing in App.config");
+                Console.WriteLine("Error: _vuhlLeadAdmin is missing in configuration");
                 isValid = false;
             }
             else
@@ -549,7 +549,7 @@ namespace Icharus
             // Check LoanOfficer
             if (string.IsNullOrEmpty(LoanOfficer))
             {
-                Console.WriteLine("Error: LoanOfficer is missing in App.config");
+                Console.WriteLine("Error: LoanOfficer is missing in configuration");
                 isValid = false;
             }
             else

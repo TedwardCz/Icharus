@@ -23,23 +23,26 @@ This application replicates the functionality to create a Lead in CRM using the 
 
 ## Configuration
 
-The application uses the following configuration values from App.config:
+The application uses centralized configuration files located at `C:\customApps\Icharus\app.env.config\`:
 
-- `CrmServiceEnvironment`: The CRM environment to connect to (e.g., "UAT")
-- `BusinessUnit`: The business unit to use (e.g., "CRM")
-- `ApplicationToken`: The application token for authentication
-- `_vuhlLeadAdmin`: The GUID of the team that will own the created leads
+- `LenderCrmServiceEnvironment`: The CRM environment to connect to (e.g., "UAT")
+- `LenderBusinessUnit`: The business unit to use (e.g., "CRM")
+- `LenderApplicationToken`: The application token for authentication
+- `LenderLeadAdmin`: The GUID of the team that will own the created leads
+- `LenderLoanOfficer`: The GUID of the loan officer
 
 ### Environment Configuration
 
-The application supports multiple environments (DEV, UAT, PROD) with environment-specific configuration files:
+The application supports multiple environments (DEV, UAT, PROD) with centralized configuration files:
 
-- `App.config` - Base configuration file
-- `App.Debug.config` - DEV environment settings
-- `App.UAT.config` - UAT environment settings
-- `App.PROD.config` - PROD environment settings
+- `App.config` - Base configuration file with default values
+- `App.Debug.config` - DEV environment overrides
+- `App.UAT.config` - UAT environment overrides
+- `App.PROD.config` - PROD environment overrides
 
-See the `ENVIRONMENT_CONFIG.md` file in the Implementation directory for detailed instructions on environment configuration.
+All configuration files are centralized in the `app.env.config` directory and loaded at runtime based on the `--env` parameter.
+
+The application loads configuration at runtime from the centralized files - no rebuilding required for different environments.
 
 ## Build Configurations
 
@@ -48,6 +51,8 @@ The project supports the following build configurations:
 - **Debug**: Standard debug build with CRM SDK integration
 - **MockDebug**: Debug build with mock implementation (no CRM SDK required)
 - **Release**: Release build with CRM SDK integration
+
+All configurations use the same centralized configuration files for runtime environment switching.
 
 ## Building the Project
 

@@ -12,12 +12,12 @@ The Icharus project supports the following environments:
 
 ## Configuration Files
 
-The environment-specific settings are managed through XML transformation files:
+The environment-specific settings are managed through centralized configuration files located at `C:\customApps\Icharus\app.env.config\`:
 
-- `App.config` - Base configuration file
-- `App.Debug.config` - Transforms for DEV environment
-- `App.UAT.config` - Transforms for UAT environment (default)
-- `App.PROD.config` - Transforms for PROD environment
+- `App.config` - Base configuration file with default values
+- `App.Debug.config` - DEV environment overrides
+- `App.UAT.config` - UAT environment overrides
+- `App.PROD.config` - PROD environment overrides
 
 ## How to Switch Environments
 
@@ -98,17 +98,20 @@ To modify settings for a specific environment:
 3. Save the file
 4. Rebuild the project for that environment
 
-## How XML Transformations Work
+## How Runtime Configuration Loading Works
 
-The SlowCheetah NuGet package handles XML transformations during build. When you build for a specific configuration (e.g., PROD), it applies the transformations from the corresponding config file (e.g., `App.PROD.config`) to the base `App.config`.
+The application loads configuration at runtime based on the `--env` parameter:
 
-The transformation is specified using XML attributes:
-- `xdt:Transform="Replace"` - Replaces the entire element
-- `xdt:Locator="Match(key)"` - Identifies which element to transform based on the key attribute
+1. Loads base settings from the centralized `App.config`
+2. Applies environment-specific overrides from the corresponding config file (e.g., `App.PROD.config`)
+3. No build-time transformations or rebuilding required
+
+Configuration files use standard XML format with `<add key="..." value="..." />` elements.
 
 ## Adding New Configuration Settings
 
 To add a new setting to all environments:
 
-1. Add the setting to the base `App.config` file
-2. Add the setting with environment-specific values to each environment config file
+1. Add the setting to the base `App.config` file in the `app.env.config` directory
+2. Add the setting with environment-specific values to each environment config file in the same directory
+3. No project rebuilding required - changes take effect immediately

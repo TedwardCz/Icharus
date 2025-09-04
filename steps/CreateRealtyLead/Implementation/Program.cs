@@ -30,7 +30,7 @@ namespace Icharus
 {
     public class Program
     {
-        // Configuration values from App.config
+        // Configuration values from centralized config files
         private static string ApplicationToken = string.Empty;
         private static string BusinessUnitValue = string.Empty;
         private static string CrmServiceEnvironment = string.Empty;
@@ -373,11 +373,11 @@ namespace Icharus
         }
         
         /// <summary>
-        /// Loads configuration values from App.config and environment-specific overrides
+        /// Loads configuration values from centralized config files and environment-specific overrides
         /// </summary>
         private static void LoadEnvironmentConfiguration(string environment)
         {
-            // First load settings from the base App.config
+            // First load settings from the centralized base config
             ApplicationToken = ConfigurationManager.AppSettings["RealtyApplicationToken"];
             BusinessUnitValue = ConfigurationManager.AppSettings["RealtyBusinessUnit"];
             CrmServiceEnvironment = ConfigurationManager.AppSettings["RealtyCrmServiceEnvironment"];
@@ -497,14 +497,14 @@ namespace Icharus
             // Check ApplicationToken
             if (string.IsNullOrEmpty(ApplicationToken))
             {
-                Console.WriteLine("Error: ApplicationToken is missing in App.config");
+                Console.WriteLine("Error: ApplicationToken is missing in configuration");
                 isValid = false;
             }
             
             // Check BusinessUnitValue
             if (string.IsNullOrEmpty(BusinessUnitValue))
             {
-                Console.WriteLine("Error: BusinessUnit is missing in App.config");
+                Console.WriteLine("Error: BusinessUnit is missing in configuration");
                 isValid = false;
             }
             else
@@ -524,21 +524,21 @@ namespace Icharus
             // Check CrmServiceEnvironment
             if (string.IsNullOrEmpty(CrmServiceEnvironment))
             {
-                Console.WriteLine("Error: CrmServiceEnvironment is missing in App.config");
+                Console.WriteLine("Error: CrmServiceEnvironment is missing in configuration");
                 isValid = false;
             }
             
             // Check LeadTeamId
             if (string.IsNullOrEmpty(LeadTeamId))
             {
-                Console.WriteLine("Error: LeadTeamId is missing in App.config");
+                Console.WriteLine("Error: LeadTeamId is missing in configuration");
                 isValid = false;
             }
             
             // Check RealtyAgent
             if (string.IsNullOrEmpty(RealtyAgent))
             {
-                Console.WriteLine("Error: RealtyAgent is missing in App.config");
+                Console.WriteLine("Error: RealtyAgent is missing in configuration");
                 isValid = false;
             }
             
