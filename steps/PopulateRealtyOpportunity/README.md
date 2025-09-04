@@ -35,8 +35,16 @@ dotnet build
 To run the tool, use the following command:
 
 ```
-dotnet run [--env|-e <environment>] --opportunity|-o <opportunityGuid>
+dotnet run [--env|-e <environment>] --opportunity|-o <opportunityGuid> [--closeprobability <probability>] [--rss_brand <brandValue>] [--rss_attachmentzipcode <zipcode>]
 ```
+
+### Parameters:
+
+- `--env` or `-e`: Environment (DEV, UAT, PROD) - defaults to UAT
+- `--opportunity` or `-o`: The GUID of the opportunity to populate (required)
+- `--closeprobability`: Close probability percentage (0-100) - defaults to 75%
+- `--rss_brand`: Brand value (0-2) - defaults to 0 (Realty Search Solutions)
+- `--rss_attachmentzipcode`: Attachment zip code - defaults to 00920
 
 ### Examples:
 
@@ -48,6 +56,11 @@ dotnet run --opportunity 12345678-1234-1234-1234-123456789012
 Run with specific environment:
 ```
 dotnet run --env PROD --opportunity 12345678-1234-1234-1234-123456789012
+```
+
+Run with custom parameters:
+```
+dotnet run --opportunity 12345678-1234-1234-1234-123456789012 --closeprobability 90 --rss_brand 1 --rss_attachmentzipcode 78701
 ```
 
 Or using short parameter names:

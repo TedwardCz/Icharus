@@ -31,6 +31,7 @@ EXAMPLES:
 PROJECTS BUILT:
     - CreateLenderLead
     - CreateRealtyLead
+    - myQueueRssAttachAgent
     - PopulateLenderOpportunity
     - PopulateRealtyOpportunity
     - QualifyLenderLead
@@ -61,6 +62,10 @@ $projects = @(
     @{
         Name = "CreateRealtyLead"
         Path = "steps\CreateRealtyLead\Implementation\CreateRealtyLead.csproj"
+    },
+    @{
+        Name = "myQueueRssAttachAgent"
+        Path = "steps\myQueueRssAttachAgent\Implementation\myQueueRssAttachAgent.csproj"
     },
     @{
         Name = "PopulateLenderOpportunity"
