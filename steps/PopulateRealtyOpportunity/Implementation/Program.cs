@@ -81,14 +81,15 @@ namespace Icharus
             Guid? opportunityGuid = parsedArgs.Item2;
             int closeProbability = parsedArgs.Item3;
             int brandValue = parsedArgs.Item4;
+            string attachmentZipCode = parsedArgs.Item5;
             
             // Check if opportunity GUID was provided
             if (!opportunityGuid.HasValue)
             {
                 Console.WriteLine("Error: Opportunity GUID is required.");
-                Console.WriteLine("Usage: dotnet run [--env|-e <environment>] --opportunity|-o <opportunityGuid> [--closeprobability <probability>] [--rss_brand <brandValue>]");
+                Console.WriteLine("Usage: dotnet run [--env|-e <environment>] --opportunity|-o <opportunityGuid> [--closeprobability <probability>] [--rss_brand <brandValue>] [--rss_attachmentzipcode <zipcode>]");
                 Console.WriteLine("Example: dotnet run --opportunity 12345678-1234-1234-1234-123456789012");
-                Console.WriteLine("Example: dotnet run -e PROD -o 12345678-1234-1234-1234-123456789012 --closeprobability 90 --rss_brand 1");
+                Console.WriteLine("Example: dotnet run -e PROD -o 12345678-1234-1234-1234-123456789012 --closeprobability 90 --rss_brand 1 --rss_attachmentzipcode 00920");
                 return;
             }
             
@@ -105,10 +106,10 @@ namespace Icharus
                 return;
             }
             
-            Console.WriteLine($"Populating realty opportunity with ID: {opportunityGuid.Value} with close probability: {closeProbability}% and brand value: {brandValue}");
+            Console.WriteLine($"Populating realty opportunity with ID: {opportunityGuid.Value} with close probability: {closeProbability}%, brand value: {brandValue}, and attachment zip code: {attachmentZipCode}");
             
-            // Populate the opportunity using the provided GUID, close probability, and brand value
-            bool success = PopulateCrmOpportunity(opportunityGuid.Value, closeProbability, brandValue);
+            // Populate the opportunity using the provided GUID, close probability, brand value, and attachment zip code
+            bool success = PopulateCrmOpportunity(opportunityGuid.Value, closeProbability, brandValue, attachmentZipCode);
             
             if (success)
             {
@@ -135,13 +136,14 @@ namespace Icharus
         /// Parses the command line arguments for environment, opportunity GUID, and opportunity parameters
         /// </summary>
         /// <param name="args">Command line arguments</param>
-        /// <returns>Tuple containing environment, opportunity GUID (if provided), and close probability</returns>
-        private static Tuple<string, Guid?, int, int> ParseCommandLineArgs(string[] args)
+        /// <returns>Tuple containing environment, opportunity GUID (if provided), close probability, brand value, and attachment zip code</returns>
+        private static Tuple<string, Guid?, int, int, string> ParseCommandLineArgs(string[] args)
         {
             string environment = DEFAULT_ENVIRONMENT;
             Guid? opportunityGuid = null;
             int closeProbability = 75; // Default close probability
             int brandValue = 0; // Default brand value (0 = Realty Search Solutions default)
+            string attachmentZipCode = "00920"; // Default attachment zip code
             
             for (int i = 0; i < args.Length; i++)
             {
@@ -215,9 +217,26 @@ namespace Icharus
                         i++; // Skip the next argument as we've already processed it
                     }
                 }
+                // Parse rss_attachmentzipcode parameter
+                else if (arg == "--rss_attachmentzipcode")
+                {
+                    if (i + 1 < args.Length)
+                    {
+                        string zipArg = args[i + 1];
+                        if (!string.IsNullOrWhiteSpace(zipArg))
+                        {
+                            attachmentZipCode = zipArg;
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Warning: '{zipArg}' is not a valid zip code. Using default value of 00920.");
+                        }
+                        i++; // Skip the next argument as we've already processed it
+                    }
+                }
             }
             
-            return new Tuple<string, Guid?, int, int>(environment, opportunityGuid, closeProbability, brandValue);
+            return new Tuple<string, Guid?, int, int, string>(environment, opportunityGuid, closeProbability, brandValue, attachmentZipCode);
         }
         
         /// <summary>
@@ -330,8 +349,9 @@ namespace Icharus
         /// <param name="opportunityId">The GUID of the opportunity to populate</param>
         /// <param name="closeProbability">The close probability to set for the opportunity (0-100)</param>
         /// <param name="brandValue">The brand value to set (default: 0 - Realty Search Solutions)</param>
+        /// <param name="attachmentZipCode">The attachment zip code to set (default: 00920)</param>
         /// <returns>True if the operation was successful, false otherwise</returns>
-        public static bool PopulateCrmOpportunity(Guid opportunityId, int closeProbability, int brandValue = 0)
+        public static bool PopulateCrmOpportunity(Guid opportunityId, int closeProbability, int brandValue = 0, string attachmentZipCode = "00920")
         {
             // Validate required parameters
             if (opportunityId == Guid.Empty)
@@ -348,6 +368,7 @@ namespace Icharus
                 Console.WriteLine("Mock realty opportunity population for opportunity ID: " + opportunityId);
                 Console.WriteLine($"Setting close probability to {closeProbability}%");
                 Console.WriteLine($"Setting brand value to {brandValue} (0 = Realty Search Solutions default)");
+                Console.WriteLine($"Setting attachment zip code to {attachmentZipCode}");
                 Console.WriteLine("Realty opportunity would be populated with data in a real implementation");
                 
                 // Simulate success
@@ -433,6 +454,9 @@ namespace Icharus
                     // Set the brand value from parameter (Realty-specific branding)
                     opportunityUpdate["rss_brand"] = new Crm.CoreService.NuGet.Standard.Models.OptionSetValue(brandValue);
                     
+                    // Set the attachment zip code from parameter
+                    opportunityUpdate["rss_attachmentzipcode"] = attachmentZipCode;
+                    
                     // Example: Set the opportunity rating to "Hot" for realty opportunities
                     opportunityUpdate["opportunityratingcode"] = new Crm.CoreService.NuGet.Standard.Models.OptionSetValue(3); // 3 = Hot
                     
@@ -471,7 +495,7 @@ namespace Icharus
             for (int i = 1; i <= 3; i++)
             {
                 var testOpportunityId = Guid.NewGuid();
-                var success = PopulateCrmOpportunity(testOpportunityId, 75, 0); // Using default 75% close probability and brand 0 (RSS default)
+                var success = PopulateCrmOpportunity(testOpportunityId, 75, 0, "00920"); // Using default 75% close probability, brand 0 (RSS default), and zip code 00920
                 
                 Console.WriteLine($"Populated test realty opportunity {i} with ID: {testOpportunityId}, success: {success}");
             }
