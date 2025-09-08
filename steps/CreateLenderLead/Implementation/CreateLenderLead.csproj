@@ -34,12 +34,14 @@
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
   </ItemGroup>
 
-  <!-- Include central App.config -->
+  <!-- Include central App.config - removed since we simplified to 3 environment-specific configs -->
+  <!--
   <ItemGroup>
     <None Include="..\..\..\app.env.config\App.config">
       <Link>App.config</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  -->
 
 </Project>

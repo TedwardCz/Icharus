@@ -388,9 +388,7 @@ namespace Icharus
             CrmServiceEnvironment = environment;
             
             // Load environment-specific settings from centralized config location
-            // Map DEV to Debug to match existing config file naming convention
-            string configEnvironment = environment == "DEV" ? "Debug" : environment;
-            string centralConfigPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "..", "..", "..", "app.env.config", $"App.{configEnvironment}.config");
+            string centralConfigPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "..", "..", "..", "app.env.config", $"App.{environment}.config");
             
             // Normalize the path
             centralConfigPath = Path.GetFullPath(centralConfigPath);
