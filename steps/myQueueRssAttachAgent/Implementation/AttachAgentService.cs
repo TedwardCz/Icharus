@@ -13,6 +13,76 @@ namespace myQueueRssAttachAgent
 {
     public static class AttachAgentService
     {
+        private static string? _logFilePath;
+        
+        /// <summary>
+        /// Initializes the log file for the current session
+        /// </summary>
+        private static void InitializeLogging()
+        {
+            try
+            {
+                // Get the output directory path (same logic as TakeScreenshot)
+                string exeDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                string icharusRoot = exeDirectory;
+                for (int i = 0; i < 7; i++)
+                {
+                    icharusRoot = Directory.GetParent(icharusRoot)?.FullName;
+                    if (icharusRoot == null) break;
+                }
+                
+                string outputDirectory;
+                if (icharusRoot != null)
+                {
+                    outputDirectory = Path.Combine(icharusRoot, "output");
+                    if (!Directory.Exists(outputDirectory))
+                    {
+                        Directory.CreateDirectory(outputDirectory);
+                    }
+                }
+                else
+                {
+                    outputDirectory = Directory.GetCurrentDirectory();
+                }
+                
+                string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss_fff");
+                _logFilePath = Path.Combine(outputDirectory, $"{timestamp}_attach_agent.log");
+                
+                // Write initial log entry
+                LogMessage($"=== Attach Agent Automation Log Started ===");
+                LogMessage($"Session started at: {DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}");
+                LogMessage($"Log file: {_logFilePath}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Warning: Failed to initialize logging: {ex.Message}");
+                _logFilePath = null;
+            }
+        }
+        
+        /// <summary>
+        /// Logs a message to both console and file
+        /// </summary>
+        private static void LogMessage(string message)
+        {
+            string timestampedMessage = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] {message}";
+            
+            // Always write to console
+            Console.WriteLine(message);
+            
+            // Write to file if logging is initialized
+            if (!string.IsNullOrEmpty(_logFilePath))
+            {
+                try
+                {
+                    File.AppendAllText(_logFilePath, timestampedMessage + Environment.NewLine);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Warning: Failed to write to log file: {ex.Message}");
+                }
+            }
+        }
         /// <summary>
         /// Executes the attach agent automation for the specified opportunity
         /// </summary>
@@ -25,6 +95,9 @@ namespace myQueueRssAttachAgent
         /// <returns>True if successful, false otherwise</returns>
         public static bool ExecuteAttachAgent(Guid opportunityId, string city, string state, string zipCode, string baseUrl, bool useMockImplementation)
         {
+            // Initialize logging for this session
+            InitializeLogging();
+            
             if (useMockImplementation)
             {
                 return ExecuteMockAttachAgent(opportunityId, city, state, zipCode);
@@ -34,23 +107,24 @@ namespace myQueueRssAttachAgent
             
             try
             {
-                Console.WriteLine("Starting Attach Agent automation...");
+                LogMessage("Starting Attach Agent automation...");
+                LogMessage($"Parameters: OpportunityId={opportunityId}, City={city}, State={state}, ZipCode={zipCode}");
                 
                 // Setup Chrome WebDriver
                 driver = SetupWebDriver();
                 
                 // Navigate to opportunity page
                 string opportunityUrl = $"{baseUrl.TrimEnd('/')}/opportunity/{opportunityId}";
-                Console.WriteLine($"Navigating to: {opportunityUrl}");
+                LogMessage($"Navigating to: {opportunityUrl}");
                 driver.Navigate().GoToUrl(opportunityUrl);
                 
                 // Wait for page to load and handle OKTA redirects
                 var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
                 wait.Until(d => d.Url.Contains(opportunityId.ToString()));
-                Console.WriteLine("Page loaded successfully");
+                LogMessage("Page loaded successfully");
                 
                 // Click Attach Agent tab
-                Console.WriteLine("Looking for Attach Agent tab...");
+                LogMessage("Looking for Attach Agent tab...");
                 var attachAgentTab = wait.Until(d => 
                 {
                     var elements = d.FindElements(By.XPath("//*[contains(text(), 'Attach Agent')]"));
@@ -59,11 +133,11 @@ namespace myQueueRssAttachAgent
                 
                 if (attachAgentTab == null)
                 {
-                    Console.WriteLine("Error: Attach Agent tab not found");
+                    LogMessage("ERROR: Attach Agent tab not found");
                     return false;
                 }
                 
-                Console.WriteLine("Clicking Attach Agent tab...");
+                LogMessage("Clicking Attach Agent tab...");
                 attachAgentTab.Click();
                 Thread.Sleep(3000); // Wait for form to load
                 
@@ -74,7 +148,7 @@ namespace myQueueRssAttachAgent
                 bool formPopulated = PopulateForm(driver, city, state, zipCode);
                 if (!formPopulated)
                 {
-                    Console.WriteLine("Error: Failed to populate form");
+                    LogMessage("ERROR: Failed to populate form");
                     return false;
                 }
                 
@@ -82,7 +156,7 @@ namespace myQueueRssAttachAgent
                 bool formSubmitted = SubmitFormAndWaitForResults(driver);
                 if (!formSubmitted)
                 {
-                    Console.WriteLine("Error: Failed to submit form or get results");
+                    LogMessage("ERROR: Failed to submit form or get results");
                     return false;
                 }
                 
@@ -90,16 +164,18 @@ namespace myQueueRssAttachAgent
                 bool agentAttached = AttachAgentFromResults(driver);
                 if (!agentAttached)
                 {
-                    Console.WriteLine("Error: Failed to attach agent");
+                    LogMessage("ERROR: Failed to attach agent");
                     return false;
                 }
                 
-                Console.WriteLine("Agent attachment completed successfully");
+                LogMessage("Agent attachment completed successfully");
+                LogMessage("=== Attach Agent Automation Completed Successfully ===");
                 return true;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error during attach agent automation: {ex.Message}");
+                LogMessage($"ERROR: Exception during attach agent automation: {ex.Message}");
+                LogMessage($"Stack trace: {ex.StackTrace}");
                 
                 // Take failure screenshot
                 if (driver != null)
