@@ -236,7 +236,15 @@ namespace myQueueRssAttachAgent
             chromeOptions.AddArguments("--disable-application-cache");
             chromeOptions.AddArguments("--disable-extensions");
             chromeOptions.AddArguments("--disable-popup-blocking");
-            chromeOptions.AddArguments("--remote-debugging-port=9222");
+            chromeOptions.AddArguments("--disable-background-timer-throttling");
+            chromeOptions.AddArguments("--disable-renderer-backgrounding");
+            chromeOptions.AddArguments("--disable-hang-monitor");
+            chromeOptions.AddArguments("--no-first-run");
+            
+            // Use a random port to avoid conflicts
+            var random = new Random();
+            var debugPort = random.Next(9000, 9999);
+            chromeOptions.AddArguments($"--remote-debugging-port={debugPort}");
             
             // Set detach option to prevent immediate closing
             chromeOptions.AddUserProfilePreference("detach", true);
@@ -377,77 +385,127 @@ namespace myQueueRssAttachAgent
         {
             try
             {
-                Console.WriteLine("Looking for 'Attach Agent' button in results...");
+                LogMessage("Looking for agent results...");
                 
                 // Add small delay for UI stability
                 Thread.Sleep(2000);
                 
-                var attachAgentButton = driver.FindElement(By.XPath("//button[@data-vu-button='Attach Agent']"));
-                if (attachAgentButton.Displayed && attachAgentButton.Enabled)
+                // Check if Chrome is still responsive
+                try
                 {
-                    Console.WriteLine($"Found 'Attach Agent' button: '{attachAgentButton.Text}'");
-                    Console.WriteLine("Clicking 'Attach Agent' button...");
-                    attachAgentButton.Click();
-                    Console.WriteLine("✓ Agent attachment button clicked");
-                    
-                    // Wait for attachment to process
-                    Thread.Sleep(3000);
-                    
-                    // Wait for success message
-                    Console.WriteLine("Waiting for success message...");
-                    var successWait = new WebDriverWait(driver, TimeSpan.FromSeconds(120));
-                    
-                    var successMessage = successWait.Until(d => 
+                    var title = driver.Title;
+                    LogMessage($"Browser is responsive. Page title: {title}");
+                }
+                catch (Exception ex)
+                {
+                    LogMessage($"ERROR: Browser appears to have crashed or closed: {ex.Message}");
+                    return false;
+                }
+                
+                // First check if "No Agents Found" message is displayed
+                try
+                {
+                    var noAgentsElements = driver.FindElements(By.XPath("//*[contains(text(), 'No Agents Found') or contains(text(), 'no agents') or contains(text(), 'No agents')]"));
+                    if (noAgentsElements.Any(e => e.Displayed))
                     {
-                        try
-                        {
-                            var attachedContainer = d.FindElement(By.XPath("//div[contains(@class, 'attached-agent-container')]//h3[contains(@class, 'attached-title') and text()='Attached']"));
-                            return attachedContainer.Displayed ? attachedContainer : null;
-                        }
-                        catch
-                        {
-                            return null;
-                        }
-                    });
-                    
-                    if (successMessage != null)
-                    {
-                        Console.WriteLine("✓ Success message 'Attached' found!");
-                        
-                        // Try to get agent name
-                        try
-                        {
-                            var agentName = driver.FindElement(By.XPath("//span[contains(@class, 'agent-name')]"));
-                            Console.WriteLine($"✓ Agent attached: {agentName.Text}");
-                        }
-                        catch
-                        {
-                            Console.WriteLine("✓ Agent attached (name not found in DOM)");
-                        }
-                        
-                        return true;
-                    }
-                    else
-                    {
-                        Console.WriteLine("Success message not found within timeout");
+                        LogMessage("No agents found for the specified location");
+                        LogMessage("This is expected behavior when no agents are available in the system");
                         return false;
                     }
                 }
-                else
+                catch (Exception ex)
                 {
-                    Console.WriteLine("'Attach Agent' button found but not clickable");
+                    LogMessage($"Error checking for 'No Agents Found' message: {ex.Message}");
+                }
+                
+                // Look for the "Attach Agent" button
+                LogMessage("Looking for 'Attach Agent' button in results...");
+                try
+                {
+                    var attachAgentButton = driver.FindElement(By.XPath("//button[@data-vu-button='Attach Agent']"));
+                    if (attachAgentButton.Displayed && attachAgentButton.Enabled)
+                    {
+                        LogMessage($"Found 'Attach Agent' button: '{attachAgentButton.Text}'");
+                        LogMessage("Clicking 'Attach Agent' button...");
+                        attachAgentButton.Click();
+                        LogMessage("✓ Agent attachment button clicked");
+                        
+                        // Wait for attachment to process
+                        Thread.Sleep(3000);
+                        
+                        // Wait for success message
+                        LogMessage("Waiting for success message...");
+                        var successWait = new WebDriverWait(driver, TimeSpan.FromSeconds(120));
+                        
+                        var successMessage = successWait.Until(d => 
+                        {
+                            try
+                            {
+                                var attachedContainer = d.FindElement(By.XPath("//div[contains(@class, 'attached-agent-container')]//h3[contains(@class, 'attached-title') and text()='Attached']"));
+                                return attachedContainer.Displayed ? attachedContainer : null;
+                            }
+                            catch
+                            {
+                                return null;
+                            }
+                        });
+                        
+                        if (successMessage != null)
+                        {
+                            LogMessage("✓ Success message 'Attached' found!");
+                            
+                            // Try to get agent name
+                            try
+                            {
+                                var agentName = driver.FindElement(By.XPath("//span[contains(@class, 'agent-name')]"));
+                                LogMessage($"✓ Agent attached: {agentName.Text}");
+                            }
+                            catch
+                            {
+                                LogMessage("✓ Agent attached (name not found in DOM)");
+                            }
+                            
+                            return true;
+                        }
+                        else
+                        {
+                            LogMessage("Success message not found within timeout");
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        LogMessage("'Attach Agent' button found but not clickable");
+                        return false;
+                    }
+                }
+                catch (NoSuchElementException)
+                {
+                    LogMessage("No 'Attach Agent' button found - likely no agents available for this location");
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    LogMessage($"Error looking for 'Attach Agent' button: {ex.Message}");
                     return false;
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error attaching agent: {ex.Message}");
+                LogMessage($"Error attaching agent: {ex.Message}");
                 return false;
             }
             finally
             {
                 // Always take a screenshot of the final state, regardless of success or failure
-                TakeScreenshot(driver, $"{DateTime.Now:yyyyMMdd_HHmmss_fff}_attach_agent_final_state");
+                try
+                {
+                    TakeScreenshot(driver, $"{DateTime.Now:yyyyMMdd_HHmmss_fff}_attach_agent_final_state");
+                }
+                catch (Exception ex)
+                {
+                    LogMessage($"Failed to take final screenshot: {ex.Message}");
+                }
             }
         }
         
