@@ -153,49 +153,53 @@ namespace myQueueRssAttachAgent
         {
             try
             {
-                // First load settings from the base App.config
-                ApplicationToken = ConfigurationManager.AppSettings["ApplicationToken"] ?? string.Empty;
-                BaseUrl = ConfigurationManager.AppSettings["BaseUrl"] ?? string.Empty;
+                // Load environment-specific settings from centralized config location
+                string centralConfigPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "..", "..", "..", "app.env.config", $"App.{environment}.config");
                 
-                // Check if we should use mock implementation
-                string useMockSetting = ConfigurationManager.AppSettings["UseMockImplementation"] ?? "false";
-                UseMockImplementation = bool.TryParse(useMockSetting, out bool mockValue) && mockValue;
+                // Normalize the path
+                centralConfigPath = Path.GetFullPath(centralConfigPath);
                 
-                // Load environment-specific configuration
-                string configPath = GetEnvironmentConfigPath(environment);
-                
-                if (File.Exists(configPath))
+                if (File.Exists(centralConfigPath))
                 {
-                    Console.WriteLine($"Loading environment configuration from: {configPath}");
+                    Console.WriteLine($"Loading environment configuration from: {centralConfigPath}");
                     
-                    var doc = new XmlDocument();
-                    doc.Load(configPath);
+                    XmlDocument doc = new XmlDocument();
+                    doc.Load(centralConfigPath);
                     
-                    // Override with environment-specific values
-                    var appTokenNode = doc.SelectSingleNode("//add[@key='ApplicationToken']");
-                    if (appTokenNode?.Attributes?["value"] != null)
+                    // Extract settings from the environment-specific config
+                    XmlNodeList appSettings = doc.SelectNodes("//appSettings/add");
+                    if (appSettings != null)
                     {
-                        ApplicationToken = appTokenNode.Attributes["value"].Value;
-                    }
-                    
-                    var baseUrlNode = doc.SelectSingleNode("//add[@key='BaseUrl']");
-                    if (baseUrlNode?.Attributes?["value"] != null)
-                    {
-                        BaseUrl = baseUrlNode.Attributes["value"].Value;
-                    }
-                    
-                    var mockNode = doc.SelectSingleNode("//add[@key='UseMockImplementation']");
-                    if (mockNode?.Attributes?["value"] != null)
-                    {
-                        UseMockImplementation = bool.TryParse(mockNode.Attributes["value"].Value, out bool envMockValue) && envMockValue;
+                        Console.WriteLine($"Found {appSettings.Count} settings in environment config file");
+                        foreach (XmlNode setting in appSettings)
+                        {
+                            string key = setting.Attributes["key"]?.Value;
+                            string value = setting.Attributes["value"]?.Value;
+                            
+                            Console.WriteLine($"Processing config key: {key} = {value}");
+                            
+                            if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(value))
+                            {
+                                // Update the corresponding setting
+                                switch (key)
+                                {
+                                    case "myQueueRssBaseUrl":
+                                        BaseUrl = value;
+                                        Console.WriteLine($"Updated BaseUrl to: {value}");
+                                        break;
+                                }
+                            }
+                        }
                     }
                     
                     Console.WriteLine($"Configuration loaded successfully for {environment} environment.");
+                    Console.WriteLine($"Final BaseUrl: {BaseUrl}");
+                    Console.WriteLine($"UseMockImplementation: {UseMockImplementation}");
                 }
                 else
                 {
-                    Console.WriteLine($"Warning: Environment configuration file not found at {configPath}");
-                    Console.WriteLine("Using base configuration values.");
+                    Console.WriteLine($"Error: Environment configuration file not found at {centralConfigPath}");
+                    throw new FileNotFoundException($"Configuration file not found: {centralConfigPath}");
                 }
             }
             catch (Exception ex)
@@ -205,32 +209,5 @@ namespace myQueueRssAttachAgent
             }
         }
         
-        /// <summary>
-        /// Gets the path to the environment-specific configuration file
-        /// </summary>
-        /// <param name="environment">The environment (DEV, UAT, or PROD)</param>
-        /// <returns>Full path to the configuration file</returns>
-        private static string GetEnvironmentConfigPath(string environment)
-        {
-            // Get the directory where the executable is located
-            string exeDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            
-            // Navigate up 6 levels to reach the Icharus root directory
-            // From: \steps\myQueueRssAttachAgent\Implementation\bin\Debug\net6.0\
-            // To: \Icharus\
-            string icharusRoot = exeDirectory;
-            for (int i = 0; i < 6; i++)
-            {
-                icharusRoot = Directory.GetParent(icharusRoot)?.FullName;
-                if (icharusRoot == null)
-                {
-                    throw new DirectoryNotFoundException("Could not locate Icharus root directory");
-                }
-            }
-            
-            // Construct path to centralized config file
-            string configFileName = $"App.{environment}.config";
-            return Path.Combine(icharusRoot, "app.env.config", configFileName);
-        }
     }
 }

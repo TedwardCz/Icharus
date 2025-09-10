@@ -34,7 +34,7 @@ namespace myQueueRssAttachAgent
                 string outputDirectory;
                 if (icharusRoot != null)
                 {
-                    outputDirectory = Path.Combine(icharusRoot, "output");
+                    outputDirectory = Path.Combine(icharusRoot, "output", "logs");
                     if (!Directory.Exists(outputDirectory))
                     {
                         Directory.CreateDirectory(outputDirectory);
@@ -119,7 +119,7 @@ namespace myQueueRssAttachAgent
                 driver.Navigate().GoToUrl(opportunityUrl);
                 
                 // Wait for page to load and handle OKTA redirects
-                var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
+                var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(120));
                 wait.Until(d => d.Url.Contains(opportunityId.ToString()));
                 LogMessage("Page loaded successfully");
                 
@@ -335,7 +335,7 @@ namespace myQueueRssAttachAgent
                     
                     // Wait for agent results to load
                     Console.WriteLine("Waiting for agent results to load...");
-                    var resultsWait = new WebDriverWait(driver, TimeSpan.FromSeconds(60));
+                    var resultsWait = new WebDriverWait(driver, TimeSpan.FromSeconds(300));
                     
                     resultsWait.Until(d => 
                     {
@@ -395,7 +395,7 @@ namespace myQueueRssAttachAgent
                     
                     // Wait for success message
                     Console.WriteLine("Waiting for success message...");
-                    var successWait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
+                    var successWait = new WebDriverWait(driver, TimeSpan.FromSeconds(120));
                     
                     var successMessage = successWait.Until(d => 
                     {
@@ -425,9 +425,6 @@ namespace myQueueRssAttachAgent
                             Console.WriteLine("✓ Agent attached (name not found in DOM)");
                         }
                         
-                        // Take final screenshot
-                        TakeScreenshot(driver, $"{DateTime.Now:yyyyMMdd_HHmmss_fff}_agent_attached");
-                        
                         return true;
                     }
                     else
@@ -446,6 +443,11 @@ namespace myQueueRssAttachAgent
             {
                 Console.WriteLine($"Error attaching agent: {ex.Message}");
                 return false;
+            }
+            finally
+            {
+                // Always take a screenshot of the final state, regardless of success or failure
+                TakeScreenshot(driver, $"{DateTime.Now:yyyyMMdd_HHmmss_fff}_attach_agent_final_state");
             }
         }
         
@@ -472,7 +474,7 @@ namespace myQueueRssAttachAgent
                 string outputDirectory;
                 if (icharusRoot != null)
                 {
-                    outputDirectory = Path.Combine(icharusRoot, "output");
+                    outputDirectory = Path.Combine(icharusRoot, "output", "logs");
                     
                     // Create output directory if it doesn't exist
                     if (!Directory.Exists(outputDirectory))
