@@ -38,6 +38,8 @@ PROJECTS BUILT:
     - myQueueRssAttachAgent
     - SearchLenderLeadByRssLinkId
     - SearchRealtyLeadByRssLinkId
+    - SearchLenderOpportunityByRssLinkId
+    - SearchRealtyOpportunityByRssLinkId
 "@
     exit 0
 }
@@ -92,6 +94,14 @@ $projects = @(
     @{
         Name = "SearchRealtyLeadByRssLinkId"
         Path = "steps\SearchRealtyLeadByRssLinkId\Implementation\SearchRealtyLeadByRssLinkId.csproj"
+    },
+    @{
+        Name = "SearchLenderOpportunityByRssLinkId"
+        Path = "steps\SearchLenderOpportunityByRssLinkId\Implementation\SearchLenderOpportunityByRssLinkId.csproj"
+    },
+    @{
+        Name = "SearchRealtyOpportunityByRssLinkId"
+        Path = "steps\SearchRealtyOpportunityByRssLinkId\Implementation\SearchRealtyOpportunityByRssLinkId.csproj"
     }
 )
 
