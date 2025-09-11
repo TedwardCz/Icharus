@@ -34,10 +34,15 @@ if (-not ($validEnvironments -contains $Environment)) {
     $Environment = "UAT"
 }
 
-Write-Host "========================================"
+Write-Host "======================================="
 Write-Host "TestAgentAttachment_myQueueRss Script"
 Write-Host "Environment: $Environment"
 Write-Host "========================================"
+
+# Initialize test result variables
+$testName = "TestAgentAttachment_myQueueRss"
+$testStartTime = Get-Date
+$testResult = "FAIL"  # Default to FAIL, will be set to PASS if successful
 
 # Paths to the executables - using Debug build configuration (environment configs loaded at runtime)
 $createLeadPath = Join-Path -Path $PSScriptRoot -ChildPath "..\..\steps\CreateRealtyLead\Implementation\bin\Debug\net8.0\CreateRealtyLead.exe"
@@ -218,7 +223,7 @@ if ($populateResultMatch.Success) {
 Write-Host "`n[Step 4] Executing myQueueRssAttachAgent with opportunity ID: $opportunityId..."
 
 # Build the parameter list for myQueueRssAttachAgent
-$attachAgentParams = @("--env", $Environment, "--opportunity", $opportunityId)
+$attachAgentParams = @("--env", $Environment, "--opportunity", $opportunityId, "--state", "MO")
 
 # Display the command being executed
 $paramDisplay = $attachAgentParams -join " "
@@ -239,16 +244,36 @@ $agentAttachSuccessMatch = [regex]::Match($attachAgentOutput, $agentAttachSucces
 
 if ($agentAttachSuccessMatch.Success) {
     Write-Host "Successfully completed agent attachment automation!"
+    $testResult = "PASS"
 } else {
     Write-Host "Agent attachment automation completed, but success status unclear."
     Write-Host "Please review the output above for details."
+    $testResult = "FAIL"
 }
+
+# Log test result to shared test results file
+$testResultsDir = Join-Path -Path $PSScriptRoot -ChildPath "..\..\output\testResults"
+$testResultsFile = Join-Path -Path $testResultsDir -ChildPath "testResults.txt"
+
+# Ensure the testResults directory exists
+if (-not (Test-Path $testResultsDir)) {
+    New-Item -ItemType Directory -Path $testResultsDir -Force | Out-Null
+}
+
+# Format the log entry
+$timestamp = $testStartTime.ToString("yyyy-MM-dd HH:mm:ss")
+$logEntry = "$timestamp | $testName | $Environment | $testResult"
+
+# Append to the test results file
+Add-Content -Path $testResultsFile -Value $logEntry
 
 Write-Host "`n========================================"
 Write-Host "TestAgentAttachment_myQueueRss Script Completed"
 Write-Host "========================================"
 Write-Host "Lead ID: $leadId"
 Write-Host "Opportunity ID: $opportunityId"
+Write-Host "Test Result: $testResult"
+Write-Host "Result logged to: $testResultsFile"
 Write-Host "Agent attachment test completed."
 
 # Return the opportunity ID for potential use by calling scripts
