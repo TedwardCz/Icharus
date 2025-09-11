@@ -10,16 +10,24 @@ This step is part of the Icharus workflow and is designed to populate data on a 
 
 ## Configuration
 
-Before using this tool, you need to configure the appropriate environment settings:
+The application uses centralized configuration files located at `C:\customApps\Icharus\app.env.config\`:
 
-1. Open the relevant configuration file:
-   - `Implementation/App.Debug.config` for DEV environment
-   - `Implementation/App.UAT.config` for UAT environment
-   - `Implementation/App.PROD.config` for PROD environment
+- `App.config` - Base configuration file with default values
+- `App.Debug.config` - DEV environment overrides
+- `App.UAT.config` - UAT environment overrides
+- `App.PROD.config` - PROD environment overrides
 
-2. Update the `ApplicationToken` value with a valid token for the corresponding environment.
+All configuration files are centralized in the `app.env.config` directory and loaded at runtime based on the `--env` parameter.
 
-See `Implementation/ENVIRONMENT_CONFIG.md` for more details on configuration.
+The application loads configuration at runtime from the centralized files - no rebuilding required for different environments.
+
+### Key Configuration Values
+
+- `LenderApplicationToken` - Authentication token for CRM
+- `LenderBusinessUnit` - Business unit (e.g., "CRM")
+- `LenderCrmServiceEnvironment` - Target CRM environment
+- `LenderLeadAdmin` - Team GUID for lead ownership
+- `LenderLoanOfficer` - Loan officer GUID
 
 ## Building the Tool
 

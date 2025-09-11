@@ -25,7 +25,11 @@ Icharus/
 │   ├── PopulateLenderOpportunity/  # Populate lender opportunities
 │   ├── PopulateRealtyOpportunity/  # Populate realty opportunities
 │   ├── QualifyLenderLead/   # Convert lender leads to opportunities
-│   └── QualifyRealtyLead/   # Convert realty leads to opportunities
+│   ├── QualifyRealtyLead/   # Convert realty leads to opportunities
+│   ├── SearchLenderLeadByRssLinkId/    # Search lender leads by RSS Link ID
+│   ├── SearchRealtyLeadByRssLinkId/    # Search realty leads by RSS Link ID
+│   ├── SearchLenderOpportunityByRssLinkId/  # Search lender opportunities by RSS Link ID
+│   └── SearchRealtyOpportunityByRssLinkId/  # Search realty opportunities by RSS Link ID
 └── tasks/                   # Orchestrated workflows
     ├── CreateLenderOpp_Vanilla/  # Full lender workflow
     └── CreateRealtyOpp_Vanilla/  # Full realty workflow
@@ -111,6 +115,10 @@ dotnet run -- --env PROD
 | QualifyRealtyLead | Convert realty leads to opportunities | .NET 8.0 |
 | PopulateLenderOpportunity | Populate lender opportunity data | .NET 6.0 |
 | PopulateRealtyOpportunity | Populate realty opportunity data | .NET 6.0 |
+| SearchLenderLeadByRssLinkId | Search lender leads by RSS Link ID | .NET 8.0 |
+| SearchRealtyLeadByRssLinkId | Search realty leads by RSS Link ID | .NET 8.0 |
+| SearchLenderOpportunityByRssLinkId | Search lender opportunities by RSS Link ID | .NET 8.0 |
+| SearchRealtyOpportunityByRssLinkId | Search realty opportunities by RSS Link ID | .NET 8.0 |
 
 ### Tasks (Orchestrated Workflows)
 
