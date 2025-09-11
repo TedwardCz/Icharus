@@ -61,4 +61,6 @@ output/*
 !output/testResults/
 !output/testResults/.gitkeep
 output/logs/*
+!output/logs/.gitkeep
 output/testResults/*
+!output/testResults/.gitkeep
