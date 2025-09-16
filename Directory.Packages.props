@@ -1,0 +1,27 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- CRM SDK Packages -->
+    <PackageVersion Include="CRM.CoreService.Nuget.Standard" Version="3004.3.2" />
+    <PackageVersion Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.34" />
+    
+    <!-- Utility Packages -->
+    <PackageVersion Include="TextCopy" Version="6.2.1" />
+    <PackageVersion Include="ArtificialTestValues" Version="2025.5.14.2" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageVersion Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
+    
+    <!-- Selenium Packages (for myQueueRssAttachAgent) -->
+    <PackageVersion Include="Selenium.WebDriver" Version="4.15.0" />
+    <PackageVersion Include="Selenium.Support" Version="4.15.0" />
+    <PackageVersion Include="DotNetSeleniumExtras.WaitHelpers" Version="3.11.0" />
+    <PackageVersion Include="WebDriverManager" Version="2.17.6" />
+    
+    <!-- Microsoft Extensions (for myQueueRssAttachAgent) -->
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
+  </ItemGroup>
+</Project>

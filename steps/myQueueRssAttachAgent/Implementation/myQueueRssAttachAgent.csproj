@@ -8,13 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Selenium.WebDriver" Version="4.15.0" />
-    <PackageReference Include="Selenium.Support" Version="4.15.0" />
-    <PackageReference Include="DotNetSeleniumExtras.WaitHelpers" Version="3.11.0" />
-    <PackageReference Include="WebDriverManager" Version="2.17.4" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
+    <PackageReference Include="Selenium.WebDriver"  />
+    <PackageReference Include="Selenium.Support"  />
+    <PackageReference Include="DotNetSeleniumExtras.WaitHelpers"  />
+    <PackageReference Include="WebDriverManager"  />
+    <PackageReference Include="System.Configuration.ConfigurationManager"  />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json"  />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder"  />
   </ItemGroup>
 
   <ItemGroup>

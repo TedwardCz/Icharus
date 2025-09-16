@@ -23,15 +23,15 @@
 
   <!-- Conditional package references -->
   <ItemGroup Condition="'$(DefineConstants.Contains(MOCK_SDK))'!='true'">
-    <PackageReference Include="CRM.CoreService.Nuget.Standard" Version="3004.3.2" />
-    <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.34" />
-    <PackageReference Include="TextCopy" Version="6.2.1" />
-    <PackageReference Include="ArtificialTestValues" Version="2025.5.14.2" />
+    <PackageReference Include="CRM.CoreService.Nuget.Standard" />
+    <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" />
+    <PackageReference Include="TextCopy" />
+    <PackageReference Include="ArtificialTestValues" />
   </ItemGroup>
 
   <!-- Always include these packages -->
   <ItemGroup>
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" />
   </ItemGroup>
 
   <!-- Include central App.config - removed since we simplified to 3 environment-specific configs -->
