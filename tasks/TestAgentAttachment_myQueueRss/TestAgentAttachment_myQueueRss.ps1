@@ -47,12 +47,12 @@ $testResult = "FAIL"  # Default to FAIL, will be set to PASS if successful
 # Paths to the executables - using Debug build configuration (environment configs loaded at runtime)
 $createLeadPath = Join-Path -Path $PSScriptRoot -ChildPath "..\..\steps\CreateRealtyLead\Implementation\bin\Debug\net8.0\CreateRealtyLead.exe"
 $qualifyLeadPath = Join-Path -Path $PSScriptRoot -ChildPath "..\..\steps\QualifyRealtyLead\Implementation\bin\Debug\net8.0\QualifyRealtyLead.exe"
-$populateOpportunityPath = Join-Path -Path $PSScriptRoot -ChildPath "..\..\steps\PopulateRealtyOpportunity\Implementation\bin\Debug\net6.0\PopulateRealtyOpportunity.exe"
-$attachAgentPath = Join-Path -Path $PSScriptRoot -ChildPath "..\..\steps\myQueueRssAttachAgent\Implementation\bin\Debug\net6.0\myQueueRssAttachAgent.exe"
+$populateOpportunityPath = Join-Path -Path $PSScriptRoot -ChildPath "..\..\steps\PopulateRealtyOpportunity\Implementation\bin\Debug\net8.0\PopulateRealtyOpportunity.exe"
+$attachAgentPath = Join-Path -Path $PSScriptRoot -ChildPath "..\..\steps\myQueueRssAttachAgent\Implementation\bin\Debug\net8.0\myQueueRssAttachAgent.exe"
 
 # Check if we should use the Mock version for PopulateRealtyOpportunity
 if ($UseMock) {
-    $populateOpportunityMockPath = Join-Path -Path $PSScriptRoot -ChildPath "..\..\steps\PopulateRealtyOpportunity\Implementation\bin\MockDebug\net6.0\PopulateRealtyOpportunity.exe"
+    $populateOpportunityMockPath = Join-Path -Path $PSScriptRoot -ChildPath "..\..\steps\PopulateRealtyOpportunity\Implementation\bin\MockDebug\net8.0\PopulateRealtyOpportunity.exe"
     if (Test-Path $populateOpportunityMockPath) {
         $populateOpportunityPath = $populateOpportunityMockPath
         Write-Host "Using MockDebug version of PopulateRealtyOpportunity (MOCK MODE)"

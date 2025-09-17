@@ -44,11 +44,11 @@ $createLeadPath = Join-Path -Path $PSScriptRoot -ChildPath "..\..\steps\CreateRe
 $qualifyLeadPath = Join-Path -Path $PSScriptRoot -ChildPath "..\..\steps\QualifyRealtyLead\Implementation\bin\Debug\net8.0\QualifyRealtyLead.exe"
 
 # Define path for PopulateRealtyOpportunity
-$populateOpportunityPath = Join-Path -Path $PSScriptRoot -ChildPath "..\..\steps\PopulateRealtyOpportunity\Implementation\bin\Debug\net6.0\PopulateRealtyOpportunity.exe"
+$populateOpportunityPath = Join-Path -Path $PSScriptRoot -ChildPath "..\..\steps\PopulateRealtyOpportunity\Implementation\bin\Debug\net8.0\PopulateRealtyOpportunity.exe"
 
 # Check if we should use the Mock version instead
 if ($UseMock) {
-    $populateOpportunityMockPath = Join-Path -Path $PSScriptRoot -ChildPath "..\..\steps\PopulateRealtyOpportunity\Implementation\bin\MockDebug\net6.0\PopulateRealtyOpportunity.exe"
+    $populateOpportunityMockPath = Join-Path -Path $PSScriptRoot -ChildPath "..\..\steps\PopulateRealtyOpportunity\Implementation\bin\MockDebug\net8.0\PopulateRealtyOpportunity.exe"
     if (Test-Path $populateOpportunityMockPath) {
         $populateOpportunityPath = $populateOpportunityMockPath
         Write-Host "Using MockDebug version of PopulateRealtyOpportunity (MOCK MODE)"

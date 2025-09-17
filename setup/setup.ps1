@@ -220,6 +220,7 @@ foreach ($result in $buildResults) {
     if ($result.Error) {
         Write-Host "           Error: $($result.Error)" -ForegroundColor Red
     }
+    [System.Console]::Out.Flush()
 }
 
 if ($failureCount -eq 0) {

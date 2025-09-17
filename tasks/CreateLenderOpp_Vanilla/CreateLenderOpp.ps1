@@ -36,14 +36,14 @@ Write-Host "========================================"
 
 # Paths to the executables - using Debug build configuration (environment configs loaded at runtime)
 $createLeadPath = Join-Path -Path $PSScriptRoot -ChildPath "..\..\steps\CreateLenderLead\Implementation\bin\Debug\net8.0\CreateLenderLead.exe"
-$qualifyLeadPath = Join-Path -Path $PSScriptRoot -ChildPath "..\..\steps\QualifyLenderLead\Implementation\bin\Debug\net6.0\QualifyLenderLead.exe"
+$qualifyLeadPath = Join-Path -Path $PSScriptRoot -ChildPath "..\..\steps\QualifyLenderLead\Implementation\bin\Debug\net8.0\QualifyLenderLead.exe"
 
 # Define path for PopulateLenderOpportunity
-$populateOpportunityPath = Join-Path -Path $PSScriptRoot -ChildPath "..\..\steps\PopulateLenderOpportunity\Implementation\bin\Debug\net6.0\PopulateLenderOpportunity.exe"
+$populateOpportunityPath = Join-Path -Path $PSScriptRoot -ChildPath "..\..\steps\PopulateLenderOpportunity\Implementation\bin\Debug\net8.0\PopulateLenderOpportunity.exe"
 
 # Check if we should use the Mock version instead
 if ($UseMock) {
-    $populateOpportunityMockPath = Join-Path -Path $PSScriptRoot -ChildPath "..\..\steps\PopulateLenderOpportunity\Implementation\bin\MockDebug\net6.0\PopulateLenderOpportunity.exe"
+    $populateOpportunityMockPath = Join-Path -Path $PSScriptRoot -ChildPath "..\..\steps\PopulateLenderOpportunity\Implementation\bin\MockDebug\net8.0\PopulateLenderOpportunity.exe"
     if (Test-Path $populateOpportunityMockPath) {
         $populateOpportunityPath = $populateOpportunityMockPath
         Write-Host "Using MockDebug version of PopulateLenderOpportunity (MOCK MODE)"
